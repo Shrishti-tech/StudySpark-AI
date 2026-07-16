@@ -34,6 +34,12 @@ export default function FlashCardList({ flashcards }) {
     setFlipped(false);
   };
 
+  const handleRestart = () => {
+    setCards(flashcards);
+    setIndex(0);
+    setFlipped(false);
+  };
+
   const current = cards[index];
   const buttonClass =
     "rounded-lg border border-slate-300 dark:border-slate-700 px-4 py-2 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors";
@@ -51,7 +57,7 @@ export default function FlashCardList({ flashcards }) {
         onFlip={() => setFlipped((f) => !f)}
       />
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-3">
         <button onClick={() => goTo(index - 1)} className={buttonClass}>
           ← Previous
         </button>
@@ -60,6 +66,9 @@ export default function FlashCardList({ flashcards }) {
         </button>
         <button onClick={() => goTo(index + 1)} className={buttonClass}>
           Next →
+        </button>
+        <button onClick={handleRestart} className={buttonClass}>
+          ⟲ Restart
         </button>
       </div>
     </div>

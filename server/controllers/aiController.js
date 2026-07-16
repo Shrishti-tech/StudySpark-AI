@@ -1,4 +1,4 @@
-import { generateContent } from "../services/geminiService.js";
+import { generateContent } from "../services/groqService.js";
 import { buildFullPrompt, buildFlashcardsPrompt, buildQuizPrompt } from "../utils/promptBuilder.js";
 import { parseJSON, validateFlashcards, validateQuiz } from "../utils/validateResponse.js";
 

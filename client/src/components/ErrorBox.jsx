@@ -13,6 +13,9 @@ function describeError(error) {
   if (error.code === "EmptyResponseError") {
     return { icon: "📭", title: "The AI returned nothing", detail: error.message };
   }
+  if (error.code === "RateLimitError" || error.status === 429) {
+    return { icon: "⏳", title: "Rate limit or quota exceeded", detail: error.message };
+  }
   return { icon: "⚠️", title: "Something went wrong", detail: error.message };
 }
 
