@@ -41,7 +41,7 @@ Respond with this exact JSON shape:
     {
       "question": "string",
       "options": ["string", "string", "string", "string"],
-      "correctAnswer": "string (must exactly match one of the options)"
+      "answer": "string (must exactly match one of the options)"
     }
   ]
 }
@@ -68,7 +68,7 @@ Respond with this exact JSON shape:
     {
       "question": "string",
       "options": ["string", "string", "string", "string"],
-      "correctAnswer": "string (must exactly match one of the options)"
+      "answer": "string (must exactly match one of the options)"
     }
   ]
 }

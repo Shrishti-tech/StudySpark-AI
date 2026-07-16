@@ -1,7 +1,7 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
 const REQUEST_TIMEOUT_MS = 20000;
-const MODEL_NAME = "gemini-1.5-flash";
+const MODEL_NAME = "gemini-2.0-flash";
 
 export class TimeoutError extends Error {
   constructor(message = "The AI request timed out.") {
@@ -30,28 +30,29 @@ function getClient() {
     throw err;
   }
   if (!client) {
-    client = new GoogleGenerativeAI(apiKey);
+    client = new GoogleGenAI({ apiKey });
   }
   return client;
 }
 
-function withTimeout(promise, ms) {
-  let timer;
-  const timeout = new Promise((_, reject) => {
-    timer = setTimeout(() => reject(new TimeoutError()), ms);
-  });
-  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
-}
-
 export async function generateContent(prompt) {
-  const genAI = getClient();
-  const model = genAI.getGenerativeModel({ model: MODEL_NAME });
+  const ai = getClient();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
-    const result = await withTimeout(model.generateContent(prompt), REQUEST_TIMEOUT_MS);
-    return result.response.text();
+    const response = await ai.models.generateContent({
+      model: MODEL_NAME,
+      contents: prompt,
+      config: { abortSignal: controller.signal },
+    });
+    return response.text;
   } catch (err) {
-    if (err instanceof TimeoutError) throw err;
+    if (controller.signal.aborted) {
+      throw new TimeoutError();
+    }
     throw new AIServiceError(err.message || "Unknown error calling the AI service.");
+  } finally {
+    clearTimeout(timer);
   }
 }

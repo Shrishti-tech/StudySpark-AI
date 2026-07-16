@@ -73,13 +73,13 @@ export function validateQuiz(quiz) {
       Array.isArray(item.options) &&
       item.options.length >= 2 &&
       item.options.every(isNonEmptyString) &&
-      isNonEmptyString(item.correctAnswer) &&
-      item.options.includes(item.correctAnswer)
+      isNonEmptyString(item.answer) &&
+      item.options.includes(item.answer)
   );
 
   if (!valid) {
     throw new InvalidShapeError(
-      "Each quiz question must have a question, an options array, and a correctAnswer present in options."
+      "Each quiz question must have a question, an options array, and an answer present in options."
     );
   }
 

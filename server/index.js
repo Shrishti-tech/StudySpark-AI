@@ -6,14 +6,26 @@ import aiRoutes from "./routes/ai.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ origin: process.env.CLIENT_ORIGIN || "http://localhost:5173" }));
+const LOCALHOST_ORIGIN = /^http:\/\/localhost:\d+$/;
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // No origin (e.g. curl/Postman) or any localhost port during development.
+      if (!origin || LOCALHOST_ORIGIN.test(origin) || origin === process.env.CLIENT_ORIGIN) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+  })
+);
 app.use(express.json({ limit: "1mb" }));
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use("/api/ai", aiRoutes);
+app.use("/api", aiRoutes);
 
 // 404 handler
 app.use((req, res) => {
