@@ -123,7 +123,6 @@ Specific things worth being upfront about:
 - Architectural decisions — like using an incrementing request ID + `AbortController` in `useAI.js` to stop stale AI responses from overwriting newer ones, and keeping the Express controller provider-agnostic so swapping Gemini for Groq only touched one file — were made deliberately for this assignment's specific emphasis on handling unreliable AI output, not left as defaults.
 - Every feature was verified by actually running the app (via Playwright browser automation) rather than just reading the code — including deliberately simulating network failures, empty/malformed AI responses, and rapid duplicate requests to confirm the failure-handling actually works.
 
-**[Fill in: your own role — what you directed, reviewed, changed, or debugged yourself, and which parts of the codebase you'd want to walk through in the interview.]**
 
 ## Known Limitations
 
@@ -136,8 +135,4 @@ Specific things worth being upfront about:
 - No automated test suite (Jest/RTL) — verification during development was manual + Playwright-driven, not wired into CI.
 - Not yet deployed — runs locally only.
 
-**[Fill in: anything else you noticed while using it, or would call out yourself in the interview.]**
 
-## Time Spent
-
-**[Fill in honestly — the assignment asks you to aim for ~8 hours and not exceed that. Given the scope built here (including the bonus features), be candid in the interview about actual time spent, what you'd cut if constrained to 8 hours, and what you'd tackle next if given more time.]**
