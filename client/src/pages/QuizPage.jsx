@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Quiz from "../components/Quiz.jsx";
-import { Spinner } from "../components/Loading.jsx";
+import { QuizSkeleton } from "../components/Loading.jsx";
 import ErrorBox from "../components/ErrorBox.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import { useStudy } from "../context/StudyContext.jsx";
@@ -23,7 +23,7 @@ export default function QuizPage() {
   if (loading) {
     return (
       <div className="px-4 py-12">
-        <Spinner label="Generating quiz…" />
+        <QuizSkeleton />
       </div>
     );
   }

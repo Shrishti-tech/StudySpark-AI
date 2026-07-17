@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import FlashCardList from "../components/FlashCardList.jsx";
-import { Spinner } from "../components/Loading.jsx";
+import { FlashcardSkeleton } from "../components/Loading.jsx";
 import ErrorBox from "../components/ErrorBox.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import { useStudy } from "../context/StudyContext.jsx";
@@ -29,7 +29,7 @@ export default function Flashcards() {
   if (loading) {
     return (
       <div className="px-4 py-12">
-        <Spinner label="Generating flashcards…" />
+        <FlashcardSkeleton />
       </div>
     );
   }
