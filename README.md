@@ -1,162 +1,286 @@
-# StudySpark AI
+# 📚 StudySpark AI
 
-**Turn Notes into Interactive Learning**
+Turn Notes into Interactive Learning with AI.
 
-StudySpark AI turns pasted notes (or just a topic) into AI-generated flashcards and a multiple-choice quiz — built and structured like a real SaaS product rather than a one-off script.
+StudySpark AI is a full-stack AI-powered study assistant that transforms notes or topics into interactive flashcards and multiple-choice quizzes using the Groq LLM API. It is designed to provide a clean, responsive learning experience while handling unreliable AI responses gracefully through validation, retries, and structured error handling.
 
-## Features
+---
 
-### Core Features (Assignment Requirements)
+## 🚀 Live Demo
 
-- 📝 **Smart Notes Input** — paste notes or enter any topic, live character counter, clear input
-- 🤖 **AI Flashcard Generator** — generate, flip, previous/next, shuffle, restart
-- 📚 **AI Quiz Generator** — multiple-choice questions, instant scoring, correct-answer reveal, retry only the questions you got wrong
-- 🔄 **Regenerate** — request a fresh set of flashcards or a fresh quiz independently
-- 📱 **Responsive Design** — verified on desktop, tablet, and mobile layouts
-- 🌙 **Dark Mode** — persisted across sessions, respects system preference on first load
-- ⚠️ **Robust Error Handling** — loading states, empty AI responses, invalid JSON, network errors, request timeouts, a retry button, and protection against stale responses overwriting newer ones
+**Frontend:** https://study-spark-ai-ten.vercel.app
 
-### Bonus Features (Beyond the Assignment)
+**Backend Health Check:** https://studyspark-ai-server.onrender.com/api/health
 
-- 📊 **Study Statistics Dashboard** — lifetime flashcards generated, quiz attempts, average/highest score, accuracy, all persisted locally
-- 📄 **Export Flashcards to PDF** — download the current flashcard set as a PDF
-- ✏️ **Edit & Delete Flashcards** — correct or remove individual cards after generation
-- 🔍 **Live Flashcard Search** — instantly filter cards by question or answer text
-- 💾 **Session Persistence** — reload the page and pick up right where you left off
+---
 
-## Tech Stack
+## ✨ Features
 
-**Frontend** — React 18, Vite, React Router, Tailwind CSS, Axios, jsPDF
-**Backend** — Node.js, Express, [Groq SDK](https://console.groq.com) (`llama-3.3-70b-versatile`)
-**Persistence** — browser `localStorage` (session state + lifetime stats), no database required
+### Core Features
 
-## App Flow
+- 📝 Paste notes or enter any study topic
+- 🤖 AI-generated flashcards
+- 📚 AI-generated multiple-choice quizzes
+- 🔄 Regenerate flashcards independently
+- 🔄 Regenerate quiz independently
+- 🌙 Dark / Light mode
+- 📱 Fully responsive design
+- ⚡ Fast loading with skeleton placeholders
+- ⚠️ Comprehensive error handling
+- 🔁 Retry failed requests
+
+---
+
+### Flashcards
+
+- Flip cards
+- Previous / Next navigation
+- Shuffle flashcards
+- Restart deck
+- Edit flashcards
+- Delete flashcards
+- Search flashcards instantly
+- Export flashcards as PDF
+
+---
+
+### Quiz
+
+- Multiple-choice questions
+- Instant answer validation
+- Progress indicator
+- Final score
+- Retry only incorrect questions
+- Regenerate quiz
+
+---
+
+### Study Dashboard
+
+Tracks learning statistics including:
+
+- Flashcards generated
+- Quiz attempts
+- Questions answered
+- Correct answers
+- Highest score
+- Average score
+- Accuracy percentage
+
+Statistics are stored locally using browser LocalStorage.
+
+---
+
+## 🛠 Tech Stack
+
+### Frontend
+
+- React 18
+- Vite
+- React Router
+- Tailwind CSS
+- Axios
+- jsPDF
+
+### Backend
+
+- Node.js
+- Express.js
+- Groq SDK
+- Llama 3.3 70B Versatile
+
+### Deployment
+
+- Vercel (Frontend)
+- Render (Backend)
+
+---
+
+## 📂 Project Structure
 
 ```
-Home → Generate → Flashcards → Quiz → Results → Retry Wrong Answers
-```
-
-Study Statistics are available from the navbar at any time.
-
-## Project Structure
-
-```
-StudyAI/
-├── client/                         React + Vite frontend
-│   └── src/
-│       ├── components/             FlashCard, Quiz, Result, ErrorBox, Toast, etc.
-│       ├── pages/                  Home, Flashcards, QuizPage, Results, Stats
-│       ├── context/                ThemeContext, ToastContext, StatsContext, StudyContext
-│       ├── hooks/                  useAI (loading/error state, stale-request guard)
-│       ├── services/               api.js (axios client)
-│       └── utils/                  validateJSON.js, exportPdf.js
+StudySpark-AI
 │
-└── server/                         Express backend
-    ├── routes/ai.js
-    ├── controllers/aiController.js
-    ├── services/groqService.js     Groq client + error handling
-    ├── utils/                      promptBuilder.js, validateResponse.js
-    └── index.js
+├── client
+│   ├── components
+│   ├── context
+│   ├── hooks
+│   ├── pages
+│   ├── services
+│   └── utils
+│
+├── server
+│   ├── controllers
+│   ├── routes
+│   ├── services
+│   ├── utils
+│   └── index.js
+│
+├── render.yaml
+├── README.md
+└── vercel.json
 ```
 
-## Getting Started
+---
 
-### Prerequisites
+## ⚙️ Installation
 
-- Node.js 18+
-- A free Groq API key from [console.groq.com](https://console.groq.com)
+### Clone Repository
 
-### 1. Backend setup
+```bash
+git clone <repository-url>
+
+cd StudySpark-AI
+```
+
+---
+
+### Backend Setup
 
 ```bash
 cd server
+
 npm install
-cp .env.example .env
-# edit .env and set GROQ_API_KEY=your_actual_key
+
 npm run dev
 ```
 
-The server starts on `http://localhost:5000`.
+Create a `.env` file inside the server folder:
 
-### 2. Frontend setup
+```env
+PORT=5000
+
+GROQ_API_KEY=YOUR_GROQ_API_KEY
+
+CLIENT_ORIGIN=http://localhost:5173
+```
+
+---
+
+### Frontend Setup
 
 ```bash
 cd client
+
 npm install
+
 npm run dev
 ```
 
-The app starts on `http://localhost:5173` (or the next free port).
+Create a `.env` file inside the client folder:
 
-## Deployment (Render + Vercel)
+```env
+VITE_API_URL=http://localhost:5000/api
+```
 
-The repo includes `render.yaml` (backend Blueprint) and `client/vercel.json` (frontend build config), so both platforms deploy straight from the connected GitHub repo with no manual build-command guessing.
+---
 
-### 1. Backend on Render
+## 🌐 Deployment
 
-1. [render.com](https://render.com) → **New** → **Blueprint** → connect the `StudySpark-AI` GitHub repo. Render reads `render.yaml` and proposes a `studyspark-ai-server` web service rooted at `server/` automatically. (No Blueprint support / prefer manual setup? **New → Web Service**, same repo, set **Root Directory** = `server`, **Build Command** = `npm install`, **Start Command** = `npm start`.)
-2. Under the service's **Environment** tab, set:
-   - `GROQ_API_KEY` — your real Groq key
-   - `CLIENT_ORIGIN` — leave blank for now, come back after step 2 below
-3. Deploy. Note the resulting URL, e.g. `https://studyspark-ai-server.onrender.com`.
+### Frontend
 
-### 2. Frontend on Vercel
+Hosted on **Vercel**
 
-1. [vercel.com](https://vercel.com) → **Add New → Project** → import the same repo → set **Root Directory** = `client` (Vercel auto-detects Vite from there).
-2. Add an environment variable: `VITE_API_URL` = `https://studyspark-ai-server.onrender.com/api` (your actual Render URL from step 1, with `/api` appended).
-3. Deploy. Note the resulting URL, e.g. `https://studyspark-ai.vercel.app`.
+Production Environment Variable
 
-### 3. Close the loop
+```env
+VITE_API_URL=https://studyspark-ai-server.onrender.com/api
+```
 
-Go back to the Render service's **Environment** tab and set `CLIENT_ORIGIN` to your exact Vercel URL (e.g. `https://studyspark-ai.vercel.app`, no trailing slash), then redeploy the backend — this is what lets the CORS check in `server/index.js` accept requests from your live frontend instead of only `localhost`.
+---
 
-**Note:** Render's free tier spins down after inactivity — the first request after idling can take ~30–60s to wake it up (this will surface as the app's own loading/timeout UI, not a crash).
+### Backend
 
-## Environment Variables (`server/.env`)
+Hosted on **Render**
 
-| Variable | Description |
-|---|---|
-| `PORT` | Port the Express server listens on (default `5000`) |
-| `GROQ_API_KEY` | Your Groq API key |
-| `CLIENT_ORIGIN` | Frontend origin for CORS (any `localhost:<port>` is allowed automatically in development) |
+Environment Variables
 
-## API Endpoints
+```env
+PORT=5000
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/api/health` | Health check |
-| `POST` | `/api/generate` | Generate flashcards + quiz from `{ notes, topic }` |
-| `POST` | `/api/flashcards` | Regenerate flashcards only |
-| `POST` | `/api/quiz` | Regenerate the quiz only |
+GROQ_API_KEY=YOUR_GROQ_API_KEY
 
-All endpoints return structured JSON errors (`{ error, code }`) with the appropriate HTTP status — `400` bad request, `429` rate limit/quota, `502` malformed/empty AI response, `504` timeout.
+CLIENT_ORIGIN=https://study-spark-ai-ten.vercel.app
+```
 
-## Error Handling
+---
 
-The assignment specifically emphasizes handling unreliable AI output, so the app treats it as a first-class concern on both ends:
+## 📡 API Endpoints
 
-- **Server** — validates the AI response is present, is valid JSON, and matches the expected flashcard/quiz shape before ever reaching the client
-- **Client** — a shared `useAI` hook tracks loading/error state per request, uses an `AbortController` + incrementing request ID so an older in-flight request can never overwrite a newer one, and every failure surfaces a specific, human-readable message (network error, timeout, rate limit, malformed response) with a **Retry** button
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/health` | Health Check |
+| POST | `/api/generate` | Generate Flashcards & Quiz |
+| POST | `/api/flashcards` | Regenerate Flashcards |
+| POST | `/api/quiz` | Regenerate Quiz |
 
-## AI Usage Note
+---
 
-This project was built with **Claude (Claude Code)** as an AI pair-programmer throughout the whole build — scaffolding the client/server structure, the Express + Groq backend, the React frontend, the error-handling layers, and the bonus features (Stats dashboard, PDF export, flashcard edit/search).
+## 🛡 Error Handling
 
-Specific things worth being upfront about:
-- The AI provider was switched twice during development (Gemini → hit a `limit: 0` free-tier quota issue tied to the Google account type → Groq), and a real bug in the Gemini SDK integration (it was silently switching to Vertex AI/OAuth auth mode because of an ambient environment variable) was diagnosed and fixed along the way.
-- Architectural decisions — like using an incrementing request ID + `AbortController` in `useAI.js` to stop stale AI responses from overwriting newer ones, and keeping the Express controller provider-agnostic so swapping Gemini for Groq only touched one file — were made deliberately for this assignment's specific emphasis on handling unreliable AI output, not left as defaults.
-- Every feature was verified by actually running the app (via Playwright browser automation) rather than just reading the code — including deliberately simulating network failures, empty/malformed AI responses, and rapid duplicate requests to confirm the failure-handling actually works.
+The application includes robust client-side and server-side validation.
 
+Handled scenarios include:
 
-## Known Limitations
+- Network failures
+- Request timeout
+- Empty AI response
+- Invalid JSON
+- Incorrect response format
+- Rate limiting
+- Server errors
+- Stale request protection
+- Loading skeletons
 
-- Only two AI-returned block types are supported (flashcards and multiple-choice quiz) — the stretch goal of rendering arbitrary block types (chart, checklist, etc.) wasn't built.
-- No streaming — generation returns as a single complete response rather than rendering incrementally.
-- No true refinement loop — "Regenerate" replaces the flashcard/quiz set entirely rather than editing the existing result via a follow-up prompt.
-- Session and stats persistence is local-only (`localStorage`), single-user, no accounts or backend storage.
-- Groq's free tier has request-rate limits; heavy use can surface a 429 rate-limit error (handled gracefully, but it does limit throughput).
-- The flashcard flip target is a clickable `div`, not keyboard-navigable yet (no `tabIndex`/`onKeyDown`) — the rest of the UI (buttons, inputs) is natively keyboard-accessible.
-- No automated test suite (Jest/RTL) — verification during development was manual + Playwright-driven, not wired into CI.
-- Deploy configs are included (`render.yaml`, `client/vercel.json`) but the app isn't live yet — see the Deployment section above for the exact steps.
+---
 
+## 💾 Local Storage
 
+The application stores:
+
+- Theme preference
+- Flashcards
+- Quiz data
+- Study statistics
+- Session progress
+
+---
+
+## 🎯 Future Improvements
+
+- User authentication
+- Cloud database integration
+- Study history
+- AI follow-up conversations
+- Image-based flashcards
+- Spaced repetition algorithm
+- Multi-language support
+
+---
+
+## 📸 Screenshots
+
+Add screenshots here after deployment.
+
+- Home
+- Flashcards
+- Quiz
+- Statistics Dashboard
+
+---
+
+## 👩‍💻 Author
+
+**Shrishti Dixit**
+
+B.Tech CSE Student
+
+GitHub: https://github.com/Shrishti-tech
+
+LinkedIn: *(Add your LinkedIn URL here)*
+
+---
+
+## 📄 License
+
+This project is developed for educational purposes as part of a Frontend Internship Assignment.
