@@ -12,6 +12,11 @@ StudySpark AI is a full-stack AI-powered study assistant that transforms notes o
 
 **Backend Health Check:** https://studyspark-ai-server.onrender.com/api/health
 
+## 🎥 Project Demo
+
+📺 YouTube Demo:
+https://youtu.be/ByQCCJwgYk0
+
 ---
 
 ## ✨ Features
