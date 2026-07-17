@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: studyspark-ai-server
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false

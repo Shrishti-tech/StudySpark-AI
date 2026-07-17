@@ -88,6 +88,30 @@ npm run dev
 
 The app starts on `http://localhost:5173` (or the next free port).
 
+## Deployment (Render + Vercel)
+
+The repo includes `render.yaml` (backend Blueprint) and `client/vercel.json` (frontend build config), so both platforms deploy straight from the connected GitHub repo with no manual build-command guessing.
+
+### 1. Backend on Render
+
+1. [render.com](https://render.com) → **New** → **Blueprint** → connect the `StudySpark-AI` GitHub repo. Render reads `render.yaml` and proposes a `studyspark-ai-server` web service rooted at `server/` automatically. (No Blueprint support / prefer manual setup? **New → Web Service**, same repo, set **Root Directory** = `server`, **Build Command** = `npm install`, **Start Command** = `npm start`.)
+2. Under the service's **Environment** tab, set:
+   - `GROQ_API_KEY` — your real Groq key
+   - `CLIENT_ORIGIN` — leave blank for now, come back after step 2 below
+3. Deploy. Note the resulting URL, e.g. `https://studyspark-ai-server.onrender.com`.
+
+### 2. Frontend on Vercel
+
+1. [vercel.com](https://vercel.com) → **Add New → Project** → import the same repo → set **Root Directory** = `client` (Vercel auto-detects Vite from there).
+2. Add an environment variable: `VITE_API_URL` = `https://studyspark-ai-server.onrender.com/api` (your actual Render URL from step 1, with `/api` appended).
+3. Deploy. Note the resulting URL, e.g. `https://studyspark-ai.vercel.app`.
+
+### 3. Close the loop
+
+Go back to the Render service's **Environment** tab and set `CLIENT_ORIGIN` to your exact Vercel URL (e.g. `https://studyspark-ai.vercel.app`, no trailing slash), then redeploy the backend — this is what lets the CORS check in `server/index.js` accept requests from your live frontend instead of only `localhost`.
+
+**Note:** Render's free tier spins down after inactivity — the first request after idling can take ~30–60s to wake it up (this will surface as the app's own loading/timeout UI, not a crash).
+
 ## Environment Variables (`server/.env`)
 
 | Variable | Description |
@@ -133,6 +157,6 @@ Specific things worth being upfront about:
 - Groq's free tier has request-rate limits; heavy use can surface a 429 rate-limit error (handled gracefully, but it does limit throughput).
 - The flashcard flip target is a clickable `div`, not keyboard-navigable yet (no `tabIndex`/`onKeyDown`) — the rest of the UI (buttons, inputs) is natively keyboard-accessible.
 - No automated test suite (Jest/RTL) — verification during development was manual + Playwright-driven, not wired into CI.
-- Not yet deployed — runs locally only.
+- Deploy configs are included (`render.yaml`, `client/vercel.json`) but the app isn't live yet — see the Deployment section above for the exact steps.
 
 
