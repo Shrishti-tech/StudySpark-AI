@@ -5,9 +5,10 @@ import ErrorBox from "../components/ErrorBox.jsx";
 import EmptyState from "../components/EmptyState.jsx";
 import { useStudy } from "../context/StudyContext.jsx";
 import { useToast } from "../context/ToastContext.jsx";
+import { exportFlashcardsToPdf } from "../utils/exportPdf.js";
 
 export default function Flashcards() {
-  const { flashcards, loading, error, regenFlashcards, retry } = useStudy();
+  const { flashcards, topic, loading, error, regenFlashcards, retry } = useStudy();
   const navigate = useNavigate();
   const { showToast } = useToast();
 
@@ -18,6 +19,11 @@ export default function Flashcards() {
     } catch {
       showToast("Couldn't regenerate flashcards.", "error");
     }
+  };
+
+  const handleDownloadPdf = () => {
+    exportFlashcardsToPdf(flashcards, topic);
+    showToast("Flashcards PDF downloaded!", "success");
   };
 
   if (loading) {
@@ -60,7 +66,7 @@ export default function Flashcards() {
     <div className="flex flex-col items-center gap-8 px-4 py-12 animate-[fadeIn_0.2s_ease-out]">
       <h1 className="text-2xl sm:text-3xl font-bold">Flashcards</h1>
 
-      <FlashCardList flashcards={flashcards} />
+      <FlashCardList />
 
       <div className="flex flex-col sm:flex-row gap-3">
         <button
@@ -68,6 +74,12 @@ export default function Flashcards() {
           className="rounded-lg border border-slate-300 dark:border-slate-700 px-5 py-2.5 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
         >
           🔄 Regenerate Flashcards
+        </button>
+        <button
+          onClick={handleDownloadPdf}
+          className="rounded-lg border border-slate-300 dark:border-slate-700 px-5 py-2.5 font-medium hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
+          ⬇ Download PDF
         </button>
         <button
           onClick={() => navigate("/quiz")}

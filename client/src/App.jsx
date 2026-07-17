@@ -4,6 +4,7 @@ import Home from "./pages/Home.jsx";
 import Flashcards from "./pages/Flashcards.jsx";
 import QuizPage from "./pages/QuizPage.jsx";
 import Results from "./pages/Results.jsx";
+import Stats from "./pages/Stats.jsx";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/flashcards" element={<Flashcards />} />
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/results" element={<Results />} />
+          <Route path="/stats" element={<Stats />} />
         </Routes>
       </main>
     </div>

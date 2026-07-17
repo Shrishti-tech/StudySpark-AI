@@ -9,7 +9,15 @@ export default function Navbar() {
           <span className="text-xl">⚡</span>
           <span className="font-semibold text-lg">StudySpark AI</span>
         </Link>
-        <ThemeToggle />
+        <div className="flex items-center gap-3">
+          <Link
+            to="/stats"
+            className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+          >
+            📊 Stats
+          </Link>
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );

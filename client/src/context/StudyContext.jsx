@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import { generateContent, regenerateFlashcards, regenerateQuiz } from "../services/api.js";
 import { parseIfString, validateFlashcards, validateQuiz } from "../utils/validateJSON.js";
 import { useAI } from "../hooks/useAI.js";
+import { useStats } from "./StatsContext.jsx";
 
 const STORAGE_KEY = "studyspark-session";
 
@@ -17,15 +18,20 @@ function loadSession() {
   }
 }
 
+let idCounter = 0;
+function withIds(cards) {
+  return cards.map((card) => (card.id ? card : { ...card, id: `card-${Date.now()}-${idCounter++}` }));
+}
+
 function transformGenerateResult(raw) {
   return {
-    flashcards: validateFlashcards(parseIfString(raw?.flashcards)),
+    flashcards: withIds(validateFlashcards(parseIfString(raw?.flashcards))),
     quiz: validateQuiz(parseIfString(raw?.quiz)),
   };
 }
 
 function transformFlashcardsResult(raw) {
-  return validateFlashcards(parseIfString(raw?.flashcards));
+  return withIds(validateFlashcards(parseIfString(raw?.flashcards)));
 }
 
 function transformQuizResult(raw) {
@@ -34,10 +40,11 @@ function transformQuizResult(raw) {
 
 export function StudyProvider({ children }) {
   const saved = loadSession();
+  const stats = useStats();
 
   const [notes, setNotes] = useState(saved?.notes || "");
   const [topic, setTopic] = useState(saved?.topic || "");
-  const [flashcards, setFlashcards] = useState(saved?.flashcards || null);
+  const [flashcards, setFlashcards] = useState(() => (saved?.flashcards ? withIds(saved.flashcards) : null));
   const [quiz, setQuiz] = useState(saved?.quiz || null);
   const [quizAnswers, setQuizAnswers] = useState({});
   const [score, setScore] = useState(null);
@@ -56,25 +63,30 @@ export function StudyProvider({ children }) {
     }
   }, [notes, topic, flashcards, quiz]);
 
-  const applyResult = useCallback((action, result) => {
-    if (!result) return;
-    if (action === "generate") {
-      setFlashcards(result.flashcards);
-      setQuiz(result.quiz);
-      setQuizAnswers({});
-      setScore(null);
-      setWrongQuestions([]);
-      setIsRetryMode(false);
-    } else if (action === "flashcards") {
-      setFlashcards(result);
-    } else if (action === "quiz") {
-      setQuiz(result);
-      setQuizAnswers({});
-      setScore(null);
-      setWrongQuestions([]);
-      setIsRetryMode(false);
-    }
-  }, []);
+  const applyResult = useCallback(
+    (action, result) => {
+      if (!result) return;
+      if (action === "generate") {
+        setFlashcards(result.flashcards);
+        setQuiz(result.quiz);
+        setQuizAnswers({});
+        setScore(null);
+        setWrongQuestions([]);
+        setIsRetryMode(false);
+        stats.recordFlashcardsGenerated(result.flashcards.length);
+      } else if (action === "flashcards") {
+        setFlashcards(result);
+        stats.recordFlashcardsGenerated(result.length);
+      } else if (action === "quiz") {
+        setQuiz(result);
+        setQuizAnswers({});
+        setScore(null);
+        setWrongQuestions([]);
+        setIsRetryMode(false);
+      }
+    },
+    [stats]
+  );
 
   const generate = useCallback(
     async ({ notes: n, topic: t }) => {
@@ -133,8 +145,17 @@ export function StudyProvider({ children }) {
 
     setScore({ correct, total: list.length });
     setWrongQuestions(wrong);
+    stats.recordQuizAttempt({ correct, total: list.length });
     return { correct, total: list.length, wrong };
-  }, [activeQuiz, quizAnswers]);
+  }, [activeQuiz, quizAnswers, stats]);
+
+  const updateFlashcard = useCallback((id, updates) => {
+    setFlashcards((prev) => (prev ? prev.map((card) => (card.id === id ? { ...card, ...updates } : card)) : prev));
+  }, []);
+
+  const deleteFlashcard = useCallback((id) => {
+    setFlashcards((prev) => (prev ? prev.filter((card) => card.id !== id) : prev));
+  }, []);
 
   const retryWrongQuestions = useCallback(() => {
     setIsRetryMode(true);
@@ -179,6 +200,8 @@ export function StudyProvider({ children }) {
     submitQuiz,
     retryWrongQuestions,
     clearSession,
+    updateFlashcard,
+    deleteFlashcard,
   };
 
   return <StudyContext.Provider value={value}>{children}</StudyContext.Provider>;
