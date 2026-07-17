@@ -258,16 +258,6 @@ The application stores:
 
 ---
 
-## 📸 Screenshots
-
-Add screenshots here after deployment.
-
-- Home
-- Flashcards
-- Quiz
-- Statistics Dashboard
-
----
 
 ## 👩‍💻 Author
 
@@ -277,7 +267,7 @@ B.Tech CSE Student
 
 GitHub: https://github.com/Shrishti-tech
 
-LinkedIn: *(Add your LinkedIn URL here)*
+LinkedIn: linkedin.com/in/shrishti-dixit-7735382b3
 
 ---
 
